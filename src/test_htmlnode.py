@@ -26,8 +26,8 @@ class TestHtmlNode(unittest.TestCase):
         self.assertEqual(case, test_props)
 
     def test_many_props_to_html(self):
-        case = ' href="https://www.google.com" target="_blank" thing="something"'
-        props = {"href": "https://www.google.com", "target": "_blank", "thing": "something"}
+        case = ' href="https://www" target="_blank" thing="some"'
+        props = {"href": "https://www", "target": "_blank", "thing": "some"}
         html = HtmlNode(props=props)
         test_props = html.props_to_html()
         self.assertEqual(case, test_props)
