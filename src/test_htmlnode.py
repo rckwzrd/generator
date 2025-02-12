@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HtmlNode
+from htmlnode import HtmlNode, LeafNode
 
 
 class TestHtmlNode(unittest.TestCase):
@@ -36,3 +36,25 @@ class TestHtmlNode(unittest.TestCase):
         case = "HtmlNode(p, text, None, {'class': 'primary'})"
         html = HtmlNode(tag="p", value="text", props={"class": "primary"})
         self.assertEqual(case, repr(html))
+
+
+class TestLeafNode(unittest.TestCase):
+    def test_to_html(self):
+        leaf = LeafNode(tag="a", value="Click me!", props={"href": "https://"})
+        case = '<a href="https://">Click me!</a>'
+        self.assertEqual(case, leaf.to_html())
+
+    def test_no_value(self):
+        leaf = LeafNode(tag="a", value=None, props={"href": "https:/"})
+        with self.assertRaises(ValueError):
+            leaf.to_html()
+
+    def test_no_tag(self):
+        leaf = LeafNode(value="raw text")
+        case = "raw text"
+        self.assertEqual(case, leaf.to_html())
+
+    def test_repr(self):
+        leaf = LeafNode(tag="a", value="Click me!", props={"href": "https://"})
+        case = "LeafNode(a, Click me!, {'href': 'https://'})"
+        self.assertEqual(case, repr(leaf))
