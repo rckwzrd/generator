@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HtmlNode, LeafNode
+from htmlnode import HtmlNode, LeafNode, ParentNode
 
 
 class TestHtmlNode(unittest.TestCase):
@@ -58,3 +58,44 @@ class TestLeafNode(unittest.TestCase):
         leaf = LeafNode(tag="a", value="Click me!", props={"href": "https://"})
         case = "LeafNode(a, Click me!, {'href': 'https://'})"
         self.assertEqual(case, repr(leaf))
+
+
+class TestParentNode(unittest.TestCase):
+    def test_parent_to_html(self):
+        child = LeafNode(tag="div", value="child")
+        parent = ParentNode(tag="span", children=[child])
+        case = "<span><div>child</div></span>"
+        self.assertEqual(case, parent.to_html())
+
+    def test_grandchildren_html(self):
+        grandchild = LeafNode("b", "grandchild")
+        child = ParentNode("div", [grandchild])
+        parent = ParentNode("span", [child])
+        case = "<span><div><b>grandchild</b></div></span>"
+        self.assertEqual(case, parent.to_html())
+
+    def test_many_children_to_html(self):
+        children = [
+            LeafNode("b", "bold"),
+            LeafNode(None, "normal"),
+            LeafNode("i", "italic"),
+            LeafNode(None, "normal")
+        ]
+        parent = ParentNode("p", children)
+        case = "<p><b>bold</b>normal<i>italic</i>normal</p>"
+        self.assertEqual(case, parent.to_html())
+
+    def test_value_error(self):
+        parent_no_children = ParentNode("p", children=None)
+        parent_no_tag = ParentNode(tag=None, children=[])
+        with self.assertRaises(ValueError):
+            parent_no_children.to_html()
+        with self.assertRaises(ValueError):
+            parent_no_tag.to_html()
+
+    def test_repr(self):
+        children = [LeafNode("b", "bold")]
+        props = {"class": "primary"}
+        parent = ParentNode("p", children=children, props=props)
+        case = "ParentNode(p, [LeafNode(b, bold, None)], {'class': 'primary'})"
+        self.assertEqual(case, repr(parent))
