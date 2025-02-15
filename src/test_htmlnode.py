@@ -1,6 +1,6 @@
 import unittest
 
-from htmlnode import HtmlNode, LeafNode, ParentNode
+from htmlnode import HtmlNode, LeafNode, ParentNode 
 
 
 class TestHtmlNode(unittest.TestCase):
@@ -61,10 +61,15 @@ class TestLeafNode(unittest.TestCase):
 
 
 class TestParentNode(unittest.TestCase):
-    def test_parent_to_html(self):
+    def test_children_html(self):
         child = LeafNode(tag="div", value="child")
         parent = ParentNode(tag="span", children=[child])
         case = "<span><div>child</div></span>"
+        self.assertEqual(case, parent.to_html())
+
+    def test_empty_children_html(self):
+        parent = ParentNode(tag="span", children=[])
+        case = "<span></span>"
         self.assertEqual(case, parent.to_html())
 
     def test_grandchildren_html(self):
@@ -74,7 +79,7 @@ class TestParentNode(unittest.TestCase):
         case = "<span><div><b>grandchild</b></div></span>"
         self.assertEqual(case, parent.to_html())
 
-    def test_many_children_to_html(self):
+    def test_many_children_html(self):
         children = [
             LeafNode("b", "bold"),
             LeafNode(None, "normal"),
