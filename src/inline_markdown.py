@@ -1,4 +1,17 @@
+import re
 from textnode import TextNode, TextType
+
+
+def extract_images(text):
+    regex = r"!\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(regex, text)
+    return matches
+
+
+def extract_links(text):
+    regex = r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)"
+    matches = re.findall(regex, text)
+    return matches
 
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):

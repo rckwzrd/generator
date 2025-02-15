@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from inline_markdown import split_nodes_delimiter
+from inline_markdown import split_nodes_delimiter, extract_images, extract_links
 
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -75,3 +75,29 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,
         )
+
+
+class TestExtractText(unittest.TestCase):
+    def test_extract_images(self):
+        text = "Text with ![rick roll](link/) and ![obi wan](link/)"
+        images = extract_images(text)
+        case = [("rick roll", "link/"), ("obi wan", "link/")]
+        self.assertListEqual(images, case)
+
+    def test_no_images(self):
+        text = "text images for rick roll and obi wan"
+        images = extract_images(text)
+        case = []
+        self.assertListEqual(images, case)
+
+    def test_extract_links(self):
+        text = "text links for [boot dev](https://) and [youtube](https://)"
+        links = extract_links(text)
+        case = [("boot dev", "https://"), ("youtube", "https://")]
+        self.assertListEqual(links, case)
+
+    def test_no_links(self):
+        text = "text links for boot dev and youtube"
+        links = extract_links(text)
+        case = []
+        self.assertListEqual(links, case)
