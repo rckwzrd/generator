@@ -1,7 +1,13 @@
 import unittest
 
 from textnode import TextNode, TextType
-from inline_markdown import split_nodes_delimiter, extract_images, extract_links
+from inline_markdown import (
+    split_nodes_delimiter,
+    extract_images,
+    extract_links,
+    split_nodes_image,
+    split_nodes_link
+)
 
 
 class TestInlineMarkdown(unittest.TestCase):
@@ -101,3 +107,47 @@ class TestExtractText(unittest.TestCase):
         links = extract_links(text)
         case = []
         self.assertListEqual(links, case)
+
+
+class TestSplitNodesLink(unittest.TestCase):
+    def test_split_link(self):
+        node = TextNode(
+            "Text links to [boot dev](https://) and [youtube](https://)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        case = [
+                TextNode("Text links to ", TextType.TEXT),
+                TextNode("boot dev", TextType.LINKS, "https://"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("youtube", TextType.LINKS, "https://")
+        ]
+        self.assertListEqual(new_nodes, case)
+
+    def test_split_no_link(self):
+        node = TextNode("Text with no link", TextType.TEXT)
+        new_nodes = split_nodes_link([node])
+        case = [TextNode("Text with no link", TextType.TEXT)]
+        self.assertListEqual(new_nodes, case)
+
+
+class TestSplitNodesImage(unittest.TestCase):
+    def test_split_image(self):
+        node = TextNode(
+            "Text images to ![boot dev](https://) and ![youtube](https://)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        case = [
+                TextNode("Text images to ", TextType.TEXT),
+                TextNode("boot dev", TextType.IMAGES, "https://"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("youtube", TextType.IMAGES, "https://")
+        ]
+        self.assertListEqual(new_nodes, case)
+
+    def test_split_no_image(self):
+        node = TextNode("Text with no image", TextType.TEXT)
+        new_nodes = split_nodes_image([node])
+        case = [TextNode("Text with no image", TextType.TEXT)]
+        self.assertListEqual(new_nodes, case)
