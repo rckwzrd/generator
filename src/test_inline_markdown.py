@@ -6,11 +6,66 @@ from inline_markdown import (
     extract_images,
     extract_links,
     split_nodes_image,
-    split_nodes_link
+    split_nodes_link,
+    text_to_nodes
 )
 
 
-class TestInlineMarkdown(unittest.TestCase):
+class TestTextToNodes(unittest.TestCase):
+    def test_no_text_nodes(self):
+        text = ""
+        text_nodes = text_to_nodes(text)
+        case = []
+        self.assertEqual(text_nodes, case)
+
+    def test_text_nodes(self):
+        text = "**text** and *italic* and `code` and ![image](www) and [link](www)"
+        text_nodes = text_to_nodes(text)
+        case = [
+            TextNode("text", TextType.BOLD),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("image", TextType.IMAGES, "www"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("link", TextType.LINKS, "www")
+        ]
+        self.assertEqual(text_nodes, case)
+
+    def test_text_nodes_different_order(self):
+        text = "`code` and ![image](www) and **text** and *italic* and [link](www)"
+        text_nodes = text_to_nodes(text)
+        case = [
+            TextNode("code", TextType.CODE),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("image", TextType.IMAGES, "www"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("link", TextType.LINKS, "www")
+        ]
+        self.assertEqual(text_nodes, case)
+
+    def test_text_nodes_repeated(self):
+        text = "`code` and **bold** and **more bold** and `more code`"
+        text_nodes = text_to_nodes(text)
+        case = [
+            TextNode("code", TextType.CODE),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("more bold", TextType.BOLD),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("more code", TextType.CODE)
+        ]
+        self.assertEqual(text_nodes, case)
+
+
+class TestSplitDelimiter(unittest.TestCase):
     def test_invalid_delim(self):
         node = TextNode("This is **BOLD text", TextType.TEXT)
         with self.assertRaises(ValueError):
@@ -39,7 +94,6 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,
         )
-
 
     def test_delim_many_bold(self):
         node = TextNode("This is **BOLD** and **BOLD** text", TextType.TEXT)
