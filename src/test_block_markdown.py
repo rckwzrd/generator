@@ -36,7 +36,6 @@ class TestMarkdownToBlocks(unittest.TestCase):
         h1 = "# This is a heading"
         p = "This is a paragraph. It has **bold** and *italic* words."
         li = "* item\n* item\n* item"
-        print(test_md)
         blocks = markdown_to_blocks(test_md)
         case = [h1, p, li]
         self.assertListEqual(blocks, case)
@@ -45,7 +44,6 @@ class TestMarkdownToBlocks(unittest.TestCase):
         h1 = "# Heading 1"
         h2 = "# Heading 2"
         h3 = "# Heading 3"
-        print(test_md_multi_new_line)
         blocks = markdown_to_blocks(test_md_multi_new_line)
         case = [h1, h2, h3]
         self.assertListEqual(blocks, case)
@@ -55,7 +53,6 @@ class TestMarkdownToBlocks(unittest.TestCase):
         p1 = "This is a paragraph 1."
         h2 = "# Heading 2"
         p2 = "This is paragraph 2."
-        print(test_md_white_space)
         blocks = markdown_to_blocks(test_md_white_space)
         case = [h1, p1, h2, p2]
         self.assertListEqual(blocks, case)
