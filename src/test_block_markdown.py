@@ -3,7 +3,7 @@ from block_markdown import markdown_to_blocks
 
 test_md = """# This is a heading
 
-This is a paragraph. It has **bold** and *italic* words.
+This is a paragraph.\n It has **bold** and *italic* words.
 
 * item
 * item
