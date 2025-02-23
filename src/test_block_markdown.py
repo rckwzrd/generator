@@ -1,5 +1,13 @@
 import unittest
-from block_markdown import markdown_to_blocks, block_to_type, BlockType
+from block_markdown import (
+    markdown_to_blocks,
+    block_to_type,
+    BlockType,
+    markdown_to_html,
+    text_to_children,
+    block_to_html,
+    paragraph_to_html
+)
 
 test_md = """# This is a heading
 
@@ -79,3 +87,71 @@ class TestMarkdownToBlocks(unittest.TestCase):
         blocks = markdown_to_blocks(test_md_white_space)
         case = [h1, p1, h2, p2]
         self.assertListEqual(blocks, case)
+
+
+p_md = """
+This is **bold** paragraph text.
+In a p tag.
+
+"""
+p_html = "<div><p>This is <b>bold</b> paragraph text. In a p tag.</p></div>"
+
+h_md = """# Head 1
+
+Text.
+
+## Head 2
+
+Text.
+
+"""
+h_html = "<div><h1>Head 1</h1><p>Text.</p><h2>Head 2</h2><p>Text.</p></div>"
+
+c_md = """```
+print('hello')
+```
+"""
+c_html = "<div><pre><code>print('hello')</code></pre></div>"
+
+q_md = """> quote
+> block
+
+paragraph
+"""
+q_html = "<div><blockquote>quote block</blockquote><p>paragraph</p></div>"
+
+l_md = """
+- list
+- items
+
+1. list
+2. items
+"""
+l_html = "<div><ul><li>list</li><li>items</li></ul><ol><li>list</li><li>items</li></ol></div>"
+
+
+class TestBlockToHTML(unittest.TestCase):
+    def test_markdown_to_paragraph(self):
+        node = markdown_to_html(p_md)
+        html = node.to_html()
+        self.assertEqual(html, p_html)
+
+    def test_markdown_to_heading(self):
+        node = markdown_to_html(h_md)
+        html = node.to_html()
+        self.assertEqual(html, h_html)
+
+    def test_markdown_to_code(self):
+        node = markdown_to_html(c_md)
+        html = node.to_html()
+        self.assertEqual(html, c_html)
+
+    def test_markdown_to_quote(self):
+        node = markdown_to_html(q_md)
+        html = node.to_html()
+        self.assertEqual(html, q_html)
+
+    def test_markdown_to_list(self):
+        node = markdown_to_html(l_md)
+        html = node.to_html()
+        self.assertEqual(html, l_html)
