@@ -3,10 +3,7 @@ from block_markdown import (
     markdown_to_blocks,
     block_to_type,
     BlockType,
-    markdown_to_html,
-    text_to_children,
-    block_to_html,
-    paragraph_to_html
+    markdown_to_html
 )
 
 test_md = """# This is a heading
