@@ -12,7 +12,7 @@ def extract_title(md):
     raise ValueError("No title found")
 
 
-def generate_page(source_path, template_path, target_html):
+def generate_page(source_path, template_path, target_html, basepath):
     print(f"* {source_path} {template_path} -> {target_html}")
     source_file = open(source_path, "r")
     markdown = source_file.read()
@@ -27,6 +27,8 @@ def generate_page(source_path, template_path, target_html):
     title = extract_title(markdown)
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
+    template = template.replace('href="/', 'href="' + basepath)
+    template = template.replace('src="/', 'src="' + basepath)
 
     # get dirs for html file
     target_dir = os.path.dirname(target_html)
@@ -39,7 +41,7 @@ def generate_page(source_path, template_path, target_html):
     to_file.close()
 
 
-def generate_page_recursive(source, template, target):
+def generate_page_recursive(source, template, target, basepath):
     for name in os.listdir(source):
         print("in listdir loop", name)
         source_path = os.path.join(source, name)
@@ -47,7 +49,7 @@ def generate_page_recursive(source, template, target):
         if os.path.isfile(source_path):
             print("is md file, generating html")
             target_html = Path(target_path).with_suffix(".html")
-            generate_page(source_path, template, target_html)
+            generate_page(source_path, template, target_html, basepath)
         else:
             print("is dir, calling again")
-            generate_page_recursive(source_path, template, target_path)
+            generate_page_recursive(source_path, template, target_path, basepath)
